@@ -8,6 +8,7 @@ module.exports = {
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
 
   db: {
+    connectionString: process.env.DATABASE_URL || null,
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT, 10) || 5432,
     database: process.env.DB_NAME || 'newtest',
@@ -16,6 +17,7 @@ module.exports = {
     max: parseInt(process.env.DB_POOL_MAX, 10) || 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
+    ssl: (process.env.DATABASE_URL || process.env.DB_SSL === 'true') ? { rejectUnauthorized: false } : false,
   },
 
   adminSeed: {

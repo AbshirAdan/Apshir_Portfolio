@@ -20,6 +20,8 @@ const educationRoutes = require('./education.routes');
 const experienceRoutes = require('./experience.routes');
 const socialLinkRoutes = require('./socialLinks.routes');
 const publicRoutes = require('./public.routes');
+const messagesRoutes = require('./messages.routes');
+const userMessagesRoutes = require('./userMessages.routes');
 
 const router = express.Router();
 
@@ -42,6 +44,11 @@ router.use('/blogs', adminOnly, blogRoutes);
 
 // Professional Communication Center (contact, conversations, notifications)
 router.use('/', communicationRoutes);
+
+// Legacy Inbox / Messages Routes (required for backward compatibility and smoke testing)
+router.use('/messages', messagesRoutes);
+router.use('/admin/messages', messagesRoutes);
+router.use('/user/messages', authenticateToken, userMessagesRoutes);
 
 router.use('/certificates', adminOnly, certificateRoutes);
 router.use('/settings', adminOnly, settingsRoutes);

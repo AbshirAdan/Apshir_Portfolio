@@ -18,10 +18,12 @@ module.exports = {
     maxFileSize: 5 * 1024 * 1024,
   },
   db: {
+    connectionString: process.env.DATABASE_URL || null,
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT, 10) || 5432,
     database: process.env.DB_NAME || 'newtest',
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || '',
+    ssl: (process.env.DATABASE_URL || process.env.DB_SSL === 'true') ? { rejectUnauthorized: false } : false,
   },
 };
