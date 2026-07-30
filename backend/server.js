@@ -11,8 +11,8 @@ const startServer = async () => {
       if (!config.jwt.secret || config.jwt.secret.length < 32) {
         throw new Error('[Server] JWT_SECRET must be at least 32 characters in production');
       }
-      if (!config.db.password) {
-        throw new Error('[Server] DB_PASSWORD is required in production');
+      if (!process.env.DATABASE_URL && !process.env.DB_PASSWORD) {
+        throw new Error('[Server] Either DATABASE_URL or DB_PASSWORD is required in production');
       }
     }
 
@@ -21,9 +21,7 @@ const startServer = async () => {
     const migrator = new MigrationRunner(pool);
     await migrator.run();
 
-    if (config.env === 'development') {
-      await seedAdmin();
-    }
+    await seedAdmin();
 
     const server = app.listen(config.port, () => {
       console.log(`[Server] Running on port ${config.port} (${config.env})`);
