@@ -68,12 +68,12 @@ body {
   }
 
   .stat-card {
-    @apply rounded-2xl border border-brand-border/80 bg-brand-card p-4 text-center text-brand-text shadow-sm transition-all duration-300 md:p-5;
+    @apply rounded-2xl border border-brand-border/40 bg-brand-card/40 dark:bg-slate-900/30 backdrop-blur-md p-4 text-center text-brand-text shadow-lg transition-all duration-300 md:p-5;
   }
 
   .stat-card:hover,
   .glass-card:hover {
-    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+    @apply -translate-y-1 border-brand-primary/30 shadow-xl shadow-brand-primary/10;
   }
 
   .section-container {

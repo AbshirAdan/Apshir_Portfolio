@@ -18,6 +18,13 @@ export type PublicProfile = {
   avatar: string | null
   phone: string | null
   bio: string | null
+  email: string | null
+  career_objective: string | null
+  location: string | null
+  city: string | null
+  country: string | null
+  google_map_link: string | null
+  google_map_embed: string | null
 }
 
 export type PublicStats = {

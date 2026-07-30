@@ -16,6 +16,15 @@ const profileSchema = z.object({
   email: z.string().email('Invalid email'),
   phone: z.string().optional(),
   bio: z.string().optional(),
+  career_objective: z
+    .string()
+    .min(50, 'Minimum 50 characters required')
+    .max(1000, 'Maximum 1000 characters allowed'),
+  location: z.string().min(1, 'Location is required').max(100, 'Maximum 100 characters allowed'),
+  city: z.string().max(100).optional().or(z.literal('')),
+  country: z.string().max(100).optional().or(z.literal('')),
+  google_map_link: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  google_map_embed: z.string().optional().or(z.literal('')),
 })
 
 const passwordSchema = z
@@ -50,6 +59,12 @@ export default function ProfilePage() {
           email: data.email,
           phone: data.phone || '',
           bio: data.bio || '',
+          career_objective: data.career_objective || '',
+          location: data.location || '',
+          city: data.city || '',
+          country: data.country || 'Somalia',
+          google_map_link: data.google_map_link || '',
+          google_map_embed: data.google_map_embed || '',
         })
         setAvatarUrl(data.avatar)
       })
@@ -135,8 +150,53 @@ export default function ProfilePage() {
           <FormField label="Bio">
             <textarea className={formTextareaClass} rows={4} {...profileForm.register('bio')} />
           </FormField>
+
+          <FormField label="Career Objective" required error={profileForm.formState.errors.career_objective?.message}>
+            <div>
+              <textarea
+                className={`${formTextareaClass} resize-none`}
+                style={{ height: '160px' }}
+                placeholder="Write your professional career objective..."
+                maxLength={1000}
+                {...profileForm.register('career_objective')}
+              />
+              <div className="mt-1 flex justify-end">
+                <span className="text-xs text-slate-500">
+                  {profileForm.watch('career_objective')?.length || 0}/1000
+                </span>
+              </div>
+            </div>
+          </FormField>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <FormField label="Location" required error={profileForm.formState.errors.location?.message}>
+              <input className={formInputClass} placeholder="Mogadishu, Somalia" {...profileForm.register('location')} />
+            </FormField>
+            <FormField label="City" error={profileForm.formState.errors.city?.message}>
+              <input className={formInputClass} placeholder="Mogadishu" {...profileForm.register('city')} />
+            </FormField>
+            <FormField label="Country" error={profileForm.formState.errors.country?.message}>
+              <select className={formInputClass} {...profileForm.register('country')} defaultValue="Somalia">
+                <option value="Somalia">Somalia</option>
+                <option value="Kenya">Kenya</option>
+                <option value="Ethiopia">Ethiopia</option>
+                <option value="Uganda">Uganda</option>
+                <option value="Tanzania">Tanzania</option>
+              </select>
+            </FormField>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <FormField label="Google Maps Link" error={profileForm.formState.errors.google_map_link?.message}>
+              <input className={formInputClass} type="url" placeholder="https://maps.google.com/..." {...profileForm.register('google_map_link')} />
+            </FormField>
+            <FormField label="Google Maps Embed Code" error={profileForm.formState.errors.google_map_embed?.message}>
+              <textarea className={formTextareaClass} rows={3} placeholder="<iframe src=..." {...profileForm.register('google_map_embed')} />
+            </FormField>
+          </div>
+
           <Button type="submit" disabled={profileForm.formState.isSubmitting}>
-            {profileForm.formState.isSubmitting ? 'Saving...' : 'Save Profile'}
+            {profileForm.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
           </Button>
         </form>
       </Card>

@@ -22,8 +22,10 @@ const NAV = [
   { label: 'Home', href: '#home', id: 'home' },
   { label: 'About', href: '#about', id: 'about' },
   { label: 'Skills', href: '#skills', id: 'skills' },
-  { label: 'Projects', href: '#projects', id: 'projects' },
   { label: 'Experience', href: '#experience', id: 'experience' },
+  { label: 'Projects', href: '#projects', id: 'projects' },
+  { label: 'Certificates', href: '#certificates', id: 'certificates' },
+  { label: 'Resume', href: '#resume', id: 'resume' },
   { label: 'Blog', href: '#blog', id: 'blog' },
   { label: 'Contact', href: '#contact', id: 'contact' },
 ]
@@ -41,9 +43,9 @@ export function Header() {
   const isHome = location.pathname === '/'
   const activeSection = useActiveSection(isHome)
 
-  const siteTitle = settings?.site_title || profile?.full_name || 'Portfolio'
-  const logoLetter = (settings?.site_title || profile?.full_name || 'P').charAt(0).toUpperCase()
-  const siteAvatarSrc = toUploadSrc(profile?.avatar)
+  const rawSiteTitle = settings?.site_title || profile?.full_name || 'Portfolio'
+  const siteTitle = rawSiteTitle === 'Admin User' ? "Abshir's Portfolio" : rawSiteTitle
+  const logoLetter = 'A'
   const userAvatarSrc = toUploadSrc(user?.avatar)
 
   useEffect(() => {
@@ -74,10 +76,10 @@ export function Header() {
     const active =
       (isHome && activeSection === id) || (id === 'blog' && location.pathname.startsWith('/blog'))
     return [
-      'relative rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+      'relative rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-300',
       active
         ? 'text-brand-primary dark:text-brand-secondary'
-        : 'text-brand-secondaryText hover:text-brand-text',
+        : 'text-brand-secondaryText hover:text-brand-text hover:bg-slate-100/50 dark:hover:bg-slate-800/40',
     ].join(' ')
   }
 
@@ -95,26 +97,18 @@ export function Header() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'border-b border-brand-border bg-brand-card/90 shadow-sm backdrop-blur-xl'
+          ? 'border-b border-brand-border/40 bg-brand-card/90 shadow-lg backdrop-blur-xl'
           : 'bg-transparent'
       }`}
     >
       <div className="section-container flex h-16 items-center justify-between md:h-[4.5rem]">
         <Link to="/#home" className="group flex items-center gap-3" onClick={() => isHome && scrollTo('#home')}>
-          {settings?.logo ? (
-            <img src={settings.logo} alt="" className="h-10 w-10 rounded-full object-cover ring-2 ring-brand-primary/20" />
-          ) : siteAvatarSrc ? (
-            <img
-              src={siteAvatarSrc}
-              alt={profile?.full_name || siteTitle}
-              className="h-10 w-10 rounded-full object-cover object-top ring-2 ring-brand-primary/20 shadow-md transition group-hover:scale-105"
-            />
-          ) : (
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary text-base font-bold text-white shadow-md shadow-brand-primary/30 transition group-hover:scale-105">
-              {logoLetter}
-            </span>
-          )}
-          <span className="hidden font-bold text-brand-text sm:inline md:text-lg">{siteTitle}</span>
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary text-base font-bold text-white shadow-md shadow-brand-primary/30 transition group-hover:scale-105 ring-2 ring-brand-primary/20">
+            {logoLetter}
+          </span>
+          <span className="hidden font-bold text-brand-text sm:inline md:text-lg">
+            A | {siteTitle}
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Main navigation">
@@ -234,7 +228,7 @@ export function Header() {
 
           <button
             type="button"
-            className="rounded-xl p-2.5 text-brand-icon hover:bg-brand-surface lg:hidden"
+            className="rounded-xl p-2.5 text-brand-icon hover:bg-brand-surface lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -245,86 +239,143 @@ export function Header() {
 
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="border-t border-brand-border bg-brand-card/95 backdrop-blur-xl lg:hidden"
-          >
-            <nav className="section-container flex flex-col gap-1 py-4">
-              {NAV.map((item) => (
-                <a
-                  key={item.href}
-                  href={isHome ? item.href : `/${item.href}`}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    if (isHome) {
-                      scrollTo(item.href)
-                    } else {
-                      setMobileOpen(false)
-                      navigate(`/${item.href}`)
-                    }
-                  }}
-                  className="rounded-lg px-3 py-3 text-sm font-medium text-brand-secondaryText"
+          <>
+            {/* Dark blur backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[90] bg-slate-950/60 backdrop-blur-sm lg:hidden"
+              onClick={() => setMobileOpen(false)}
+            />
+            {/* Sliding Drawer */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+              className="fixed inset-y-0 right-0 z-[100] w-full max-w-xs bg-brand-card shadow-2xl flex flex-col border-l border-brand-border/40 lg:hidden"
+            >
+              {/* Header inside drawer */}
+              <div className="flex h-16 items-center justify-between border-b border-brand-border px-5 shrink-0">
+                <Link to="/#home" className="flex items-center gap-2" onClick={() => { setMobileOpen(false); scrollTo('#home'); }}>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white shadow-md">
+                    {logoLetter}
+                  </span>
+                  <span className="font-bold text-brand-text text-sm">
+                    {siteTitle}
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-xl p-2.5 text-brand-muted hover:bg-brand-surface min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  aria-label="Close menu"
                 >
-                  {item.label}
-                </a>
-              ))}
-
-              <div className="mt-3 flex flex-col gap-2 border-t border-brand-border pt-3">
-                {isAuthenticated && isAdmin ? (
-                  <Link
-                    to="/admin/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-full bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white"
-                  >
-                    Admin Dashboard
-                  </Link>
-                ) : isAuthenticated && !isAdmin ? (
-                  <>
-                    <Link
-                      to="/account/profile"
-                      onClick={() => setMobileOpen(false)}
-                      className="rounded-lg px-3 py-3 text-sm font-medium text-brand-text"
-                    >
-                      My Profile
-                    </Link>
-                    <Link
-                      to="/account/settings"
-                      onClick={() => setMobileOpen(false)}
-                      className="rounded-lg px-3 py-3 text-sm font-medium text-brand-text"
-                    >
-                      Settings
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={onLogout}
-                      className="rounded-lg px-3 py-3 text-left text-sm font-medium text-red-400"
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      to="/signin"
-                      onClick={() => setMobileOpen(false)}
-                      className="rounded-full border border-brand-border px-4 py-2.5 text-center text-sm font-medium"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      to="/signup"
-                      onClick={() => setMobileOpen(false)}
-                      className="rounded-full bg-brand-primary px-4 py-2.5 text-center text-sm font-semibold text-white"
-                    >
-                      Sign Up
-                    </Link>
-                  </>
-                )}
+                  <FiX size={20} />
+                </button>
               </div>
-            </nav>
-          </motion.div>
+
+              {/* Navigation list */}
+              <nav className="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-1.5">
+                {NAV.map((item) => (
+                  <a
+                    key={item.href}
+                    href={isHome ? item.href : `/${item.href}`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      if (isHome) {
+                        scrollTo(item.href)
+                      } else {
+                        setMobileOpen(false)
+                        navigate(`/${item.href}`)
+                      }
+                    }}
+                    className={`flex items-center rounded-xl px-4 py-3 text-sm font-semibold transition min-h-[44px] ${
+                      (isHome && activeSection === item.id) || (item.id === 'blog' && location.pathname.startsWith('/blog'))
+                        ? 'bg-brand-primary/10 text-brand-primary dark:text-brand-secondary'
+                        : 'text-brand-secondaryText hover:bg-brand-surface hover:text-brand-text'
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+
+                {/* Account details */}
+                <div className="mt-4 border-t border-brand-border pt-4 flex flex-col gap-2 shrink-0">
+                  {isAuthenticated && isAdmin ? (
+                    <Link
+                      to="/admin/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex h-[44px] items-center justify-center rounded-xl bg-indigo-600 px-4 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  ) : isAuthenticated && !isAdmin ? (
+                    <div className="flex flex-col gap-1">
+                      <div className="mb-2 flex items-center gap-3 px-4 py-2 bg-brand-surface rounded-xl">
+                        {userAvatarSrc ? (
+                          <img src={userAvatarSrc} alt="" className="h-8 w-8 rounded-full object-cover" />
+                        ) : (
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white shrink-0">
+                            {(user?.full_name || 'U').charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                        <span className="truncate text-sm font-medium text-brand-text">
+                          {user?.full_name}
+                        </span>
+                      </div>
+                      <Link
+                        to="/account/messages"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex h-[44px] items-center rounded-xl px-4 text-sm font-semibold text-brand-secondaryText hover:bg-brand-surface hover:text-brand-text"
+                      >
+                        Messages
+                      </Link>
+                      <Link
+                        to="/account/profile"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex h-[44px] items-center rounded-xl px-4 text-sm font-semibold text-brand-secondaryText hover:bg-brand-surface hover:text-brand-text"
+                      >
+                        My Profile
+                      </Link>
+                      <Link
+                        to="/account/settings"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex h-[44px] items-center rounded-xl px-4 text-sm font-semibold text-brand-secondaryText hover:bg-brand-surface hover:text-brand-text"
+                      >
+                        Settings
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={onLogout}
+                        className="flex h-[44px] items-center rounded-xl px-4 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 text-left"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <Link
+                        to="/signin"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex h-[44px] items-center justify-center rounded-xl border border-brand-border bg-brand-card hover:bg-brand-surface px-4 text-center text-sm font-semibold text-brand-text transition"
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        to="/signup"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex h-[44px] items-center justify-center rounded-xl bg-brand-primary px-4 text-center text-sm font-semibold text-white shadow-sm hover:opacity-95 transition"
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </nav>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>

@@ -33,10 +33,13 @@ api.interceptors.response.use(
       path === '/forgot-password' ||
       path === '/reset-password'
 
-    if (error.response?.status === 401 && isAdminRoute) {
+    const status = error.response?.status
+    const isUnauthorized = status === 401 || status === 403
+
+    if (isUnauthorized && isAdminRoute) {
       clearStoredToken()
       window.location.href = '/signin'
-    } else if (error.response?.status === 401 && isAccountRoute && !isAuthPage) {
+    } else if (isUnauthorized && isAccountRoute && !isAuthPage) {
       clearStoredToken()
       window.location.href = '/signin'
     }

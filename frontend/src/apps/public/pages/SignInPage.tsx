@@ -1,10 +1,11 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FiEye, FiEyeOff, FiLock, FiMail } from 'react-icons/fi'
+import { LuEye, LuEyeOff, LuLock, LuMail, LuGithub } from 'react-icons/lu'
+import { FcGoogle } from 'react-icons/fc'
 import { getPostLoginPath, useAuth } from '../../../shared/context/AuthContext'
 import { useToast } from '../../../shared/context/ToastContext'
 import { Spinner } from '../../../shared/components/ui'
@@ -18,9 +19,11 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export default function SignInPage() {
-  const { signIn } = useAuth()
+  const { signIn, loginWithToken } = useAuth()
   const toast = useToast()
   const navigate = useNavigate()
+  const location = useLocation()
+  
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
 
@@ -32,6 +35,29 @@ export default function SignInPage() {
     resolver: zodResolver(schema),
     defaultValues: { remember: true },
   })
+
+  // Handle OAuth Token redirect
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const token = params.get('token')
+    const errorMsg = params.get('error')
+
+    if (token) {
+      loginWithToken(token)
+        .then((user) => {
+          toast.success('OAuth Login successful!')
+          navigate(getPostLoginPath(user), { replace: true })
+        })
+        .catch(() => {
+          toast.error('OAuth Login failed')
+        })
+    }
+
+    if (errorMsg) {
+      setError(errorMsg.replace(/_/g, ' '))
+      toast.error('OAuth Login failed')
+    }
+  }, [location, loginWithToken, navigate, toast])
 
   const onSubmit = async (data: FormData) => {
     setError('')
@@ -48,78 +74,86 @@ export default function SignInPage() {
     }
   }
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`
+  }
+
+  const handleGithubLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/github`
+  }
+
   return (
-    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-16">
+    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-16 bg-[#F8FAFC] dark:bg-[#0F172A]">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-24 top-10 h-80 w-80 rounded-full bg-brand-primary/20 blur-3xl" />
-        <div className="absolute -right-16 bottom-10 h-72 w-72 rounded-full bg-brand-secondary/15 blur-3xl" />
+        <div className="absolute -left-24 top-10 h-80 w-80 rounded-full bg-blue-500/20 blur-[100px]" />
+        <div className="absolute -right-16 bottom-10 h-72 w-72 rounded-full bg-purple-500/15 blur-[100px]" />
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45 }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
         className="relative w-full max-w-md"
       >
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-brand-text">Sign In</h1>
-          <p className="mt-2 text-sm text-brand-muted">
-            One login for visitors and administrators — portfolio stays public for everyone
+          <h1 className="text-3xl font-bold tracking-tight text-[#111827] dark:text-white">Welcome Back</h1>
+          <p className="mt-2 text-sm text-[#6B7280] dark:text-[#CBD5E1]">
+            Sign in to continue to your portfolio dashboard
           </p>
         </div>
 
-        <div className="rounded-3xl border border-brand-border/80 bg-brand-card/70 p-8 shadow-2xl backdrop-blur-xl">
+        <div className="rounded-[24px] border border-[#E5E7EB] bg-white/70 p-8 shadow-2xl backdrop-blur-[12px] dark:border-[#334155] dark:bg-[#1E293B]/70">
           {error && (
-            <div className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-300">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-brand-text">Email</label>
+              <label className="mb-1.5 block text-sm font-semibold text-[#111827] dark:text-white">Email Address</label>
               <div className="relative">
-                <FiMail className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-muted" />
+                <LuMail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#94A3B8]" size={20} />
                 <input
                   type="email"
                   autoComplete="email"
-                  className="theme-input w-full !pl-10"
+                  className="w-full rounded-xl border border-[#E5E7EB] bg-white py-3 pl-11 pr-4 text-[#111827] outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-[#334155] dark:bg-[#0F172A] dark:text-white dark:focus:border-blue-400"
                   placeholder="you@example.com"
                   {...register('email')}
                 />
               </div>
-              {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
+              {errors.email && <p className="mt-1.5 text-xs font-medium text-red-500">{errors.email.message}</p>}
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-brand-text">Password</label>
+              <label className="mb-1.5 block text-sm font-semibold text-[#111827] dark:text-white">Password</label>
               <div className="relative">
-                <FiLock className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-muted" />
+                <LuLock className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#94A3B8]" size={20} />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
-                  className="theme-input w-full !pl-10 !pr-11"
+                  className="w-full rounded-xl border border-[#E5E7EB] bg-white py-3 pl-11 pr-12 text-[#111827] outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-[#334155] dark:bg-[#0F172A] dark:text-white dark:focus:border-blue-400"
                   placeholder="••••••••"
                   {...register('password')}
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-text"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94A3B8] transition-colors hover:text-[#111827] dark:hover:text-white"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                  {showPassword ? <LuEyeOff size={20} /> : <LuEye size={20} />}
                 </button>
               </div>
-              {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
+              {errors.password && <p className="mt-1.5 text-xs font-medium text-red-500">{errors.password.message}</p>}
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-brand-secondaryText">
-                <input type="checkbox" className="rounded border-brand-border" {...register('remember')} />
+              <label className="flex items-center gap-2 font-medium text-[#475569] dark:text-[#94A3B8]">
+                <input type="checkbox" className="rounded border-[#CBD5E1] dark:border-[#475569] text-blue-600 focus:ring-blue-500" {...register('remember')} />
                 Remember me
               </label>
-              <Link to="/forgot-password" className="font-medium text-brand-primary hover:underline">
+              <Link to="/forgot-password" className="font-semibold text-blue-600 hover:underline dark:text-blue-400">
                 Forgot Password?
               </Link>
             </div>
@@ -127,16 +161,39 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-primary btn-premium flex w-full items-center justify-center gap-2 !rounded-full !py-3"
+              className="flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 font-semibold text-white shadow-md transition-all hover:scale-[1.02] hover:bg-blue-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-[#1E293B]"
             >
               {isSubmitting ? <Spinner size="sm" /> : null}
               {isSubmitting ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-brand-muted">
+          <div className="my-6 flex items-center">
+            <div className="flex-1 border-t border-[#E5E7EB] dark:border-[#334155]"></div>
+            <span className="px-4 text-xs font-semibold tracking-wider text-[#94A3B8]">OR CONTINUE WITH</span>
+            <div className="flex-1 border-t border-[#E5E7EB] dark:border-[#334155]"></div>
+          </div>
+
+          <div className="grid gap-4">
+            <button
+              onClick={handleGoogleLogin}
+              className="flex h-[52px] w-full items-center justify-center gap-3 rounded-xl border border-[#E5E7EB] bg-white px-6 font-semibold text-[#111827] shadow-sm transition-all hover:scale-[1.02] hover:bg-gray-50 hover:shadow-md dark:border-[#334155] dark:bg-white dark:hover:bg-gray-100"
+            >
+              <FcGoogle size={24} />
+              Continue with Google
+            </button>
+            <button
+              onClick={handleGithubLogin}
+              className="flex h-[52px] w-full items-center justify-center gap-3 rounded-xl bg-[#24292F] px-6 font-semibold text-white shadow-sm transition-all hover:scale-[1.02] hover:bg-[#1b1f23] hover:shadow-md dark:bg-[#111827] dark:border dark:border-[#334155] dark:hover:bg-[#1f2937]"
+            >
+              <LuGithub size={24} />
+              Continue with GitHub
+            </button>
+          </div>
+
+          <p className="mt-8 text-center text-sm text-[#6B7280] dark:text-[#94A3B8]">
             Don&apos;t have an account?{' '}
-            <Link to="/signup" className="font-semibold text-brand-primary hover:underline">
+            <Link to="/signup" className="font-semibold text-blue-600 hover:underline dark:text-blue-400">
               Sign Up
             </Link>
           </p>

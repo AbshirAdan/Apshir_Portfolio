@@ -8,6 +8,12 @@ export type AuthUser = {
   avatar: string | null
   phone: string | null
   bio: string | null
+  career_objective: string | null
+  location: string | null
+  city: string | null
+  country: string | null
+  google_map_link: string | null
+  google_map_embed: string | null
   status?: string
   created_at: string
   updated_at: string
@@ -66,7 +72,7 @@ export const changePassword = (data: {
   confirmPassword: string
 }) => apiPut<AuthUser>('/auth/change-password', data)
 
-export const updateProfile = (data: Partial<Pick<AuthUser, 'full_name' | 'email' | 'phone' | 'bio'>>) =>
+export const updateProfile = (data: Partial<Pick<AuthUser, 'full_name' | 'email' | 'phone' | 'bio' | 'career_objective' | 'location' | 'city' | 'country' | 'google_map_link' | 'google_map_embed'>>) =>
   apiPut<AuthUser>('/profile', data)
 
 export const uploadAvatar = (file: File) => {
@@ -76,7 +82,7 @@ export const uploadAvatar = (file: File) => {
 }
 
 export const updateUserProfile = (
-  data: Partial<Pick<AuthUser, 'full_name' | 'email' | 'phone' | 'bio'>>
+  data: Partial<Pick<AuthUser, 'full_name' | 'email' | 'phone' | 'bio' | 'career_objective' | 'location' | 'city' | 'country' | 'google_map_link' | 'google_map_embed'>>
 ) => apiPut<AuthUser>('/user/profile', data)
 
 export const uploadUserAvatar = (file: File) => {

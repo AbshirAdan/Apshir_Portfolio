@@ -321,8 +321,8 @@ export const deleteSocialLink = (id: string) => apiDelete(`/social-links/${id}`)
 // Settings
 export const getSettings = () => apiGet<SiteSettings>('/settings')
 
-export const updateSettings = (data: Partial<SiteSettings>, files?: { logo?: File; favicon?: File }) => {
-  if (files?.logo || files?.favicon) {
+export const updateSettings = (data: Partial<SiteSettings>, files?: { logo?: File; favicon?: File; hero_avatar?: File }) => {
+  if (files?.logo || files?.favicon || files?.hero_avatar) {
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
       if (value === undefined || value === null) return
@@ -330,6 +330,7 @@ export const updateSettings = (data: Partial<SiteSettings>, files?: { logo?: Fil
     })
     if (files.logo) formData.append('logo', files.logo)
     if (files.favicon) formData.append('favicon', files.favicon)
+    if (files.hero_avatar) formData.append('hero_avatar', files.hero_avatar)
     return apiUploadPut<SiteSettings>('/settings', formData)
   }
   return apiPut<SiteSettings>('/settings', data)

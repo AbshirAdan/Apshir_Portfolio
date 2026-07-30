@@ -74,8 +74,8 @@ export function SkillsSection() {
       </div>
 
       {loading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="glass-card h-32 animate-pulse" />
           ))}
         </div>
@@ -86,7 +86,7 @@ export function SkillsSection() {
           {[...grouped.entries()].map(([cat, items]) => (
             <div key={cat}>
               <h3 className="mb-4 text-lg font-semibold text-brand-secondary">{cat}</h3>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {items.map((skill, i) => (
                   <motion.div
                     key={skill.id}
@@ -95,17 +95,17 @@ export function SkillsSection() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.05 }}
                     whileHover={{ y: -4, scale: 1.02 }}
-                    className="glass-card group p-5 transition-shadow hover:shadow-glow"
+                    className="glass-card group p-5 transition-shadow hover:shadow-glow h-full flex flex-col justify-between"
                   >
-                    <div className="mb-3 flex items-center gap-3">
-                      <SkillIcon name={skill.name} />
-                      <div>
-                        <p className="font-semibold">{skill.name}</p>
-                        <p className="text-xs text-brand-muted">{skill.category}</p>
+                    <div className="mb-4 flex items-center gap-3">
+                      <SkillIcon name={skill.name} className="h-10 w-10 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="font-semibold text-sm sm:text-base truncate">{skill.name}</p>
+                        <p className="text-xs text-brand-muted truncate">{skill.category}</p>
                       </div>
                       <span className="ml-auto text-sm font-bold text-brand-secondary">{skill.percentage}%</span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-white/10 light:bg-slate-200">
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${skill.percentage}%` }}

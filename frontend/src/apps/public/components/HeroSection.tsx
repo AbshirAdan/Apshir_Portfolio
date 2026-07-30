@@ -26,12 +26,13 @@ export function HeroSection() {
   }, [])
 
   const typingTitles = useMemo(
-    () => parseTypingTitles(settings?.hero_subtitle, skillNames),
-    [settings?.hero_subtitle, skillNames]
+    () => parseTypingTitles(settings?.hero_title, skillNames),
+    [settings?.hero_title, skillNames]
   )
 
-  const displayName = profile?.full_name || 'Developer'
-  const overline = settings?.hero_title || 'Welcome to my portfolio'
+  const heroGreeting = settings?.hero_greeting || "Hi, I'm Abshir Adan Hassan"
+  const heroAvatar = settings?.hero_avatar || profile?.avatar
+  const overline = settings?.hero_subtitle || 'Welcome to my portfolio'
   const bio = settings?.hero_description || profile?.bio
 
   return (
@@ -50,11 +51,10 @@ export function HeroSection() {
             </p>
 
             <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-slate-900 dark:text-white md:text-5xl lg:text-6xl">
-              Hi, I&apos;m{' '}
-              <span className="gradient-text">{displayName}</span>
+              <span className="gradient-text">{heroGreeting}</span>
             </h1>
 
-            <p className="mt-4 min-h-[2.5rem] text-xl md:text-2xl lg:text-3xl">
+            <p className="mt-4 min-h-[2.5rem] text-xl md:text-2xl lg:text-3xl font-semibold text-slate-700 dark:text-slate-300">
               <TypingTitle titles={typingTitles} />
             </p>
 
@@ -66,19 +66,30 @@ export function HeroSection() {
 
             <div className="mt-8 flex flex-wrap gap-3 md:gap-4">
               {resumeUrl ? (
-                <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-primary btn-premium">
+                <a
+                  href={resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold py-3.5 px-7 rounded-xl shadow-[0_4px_20px_rgba(37,99,235,0.3)] hover:shadow-[0_4px_25px_rgba(37,99,235,0.55)] transition-all duration-300 hover:scale-105 active:scale-100"
+                >
                   <FiDownload /> Download Resume
                 </a>
               ) : resumeLoading ? (
-                <span className="btn-primary btn-premium pointer-events-none opacity-60">
+                <span className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold py-3.5 px-7 rounded-xl shadow-[0_4px_20px_rgba(37,99,235,0.3)] opacity-60 pointer-events-none">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                   Loading…
                 </span>
               ) : null}
-              <a href="#projects" className="btn-outline btn-premium">
+              <a
+                href="#projects"
+                className="border border-brand-primary/30 dark:border-brand-secondary/30 hover:border-brand-primary dark:hover:border-brand-secondary text-slate-800 dark:text-white font-bold py-3.5 px-7 rounded-xl transition-all duration-300 hover:scale-105 hover:bg-brand-primary/5 active:scale-100 flex items-center gap-2"
+              >
                 View Projects <FiArrowRight />
               </a>
-              <a href="#contact" className="btn-outline btn-premium">
+              <a
+                href="#contact"
+                className="border border-brand-primary/30 dark:border-brand-secondary/30 hover:border-brand-primary dark:hover:border-brand-secondary text-slate-800 dark:text-white font-bold py-3.5 px-7 rounded-xl transition-all duration-300 hover:scale-105 hover:bg-brand-primary/5 active:scale-100 flex items-center gap-2"
+              >
                 <FiMail /> Hire Me
               </a>
             </div>
@@ -124,19 +135,19 @@ export function HeroSection() {
               transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut' }}
               className="relative"
             >
-              <ProfileAvatar src={profile?.avatar} name={displayName} />
+              <ProfileAvatar src={heroAvatar} name={heroGreeting} />
 
               <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
-                className="absolute -right-2 top-6 md:-right-4 md:top-10"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+                className="absolute -right-2 top-6 md:-right-4 md:top-10 z-20"
               >
-                <div className="flex items-center gap-2 rounded-full border border-white/60 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-800 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-slate-800/70 dark:text-white">
+                <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/15 dark:bg-slate-900/35 px-4 py-2 text-xs md:text-sm font-bold text-slate-900 dark:text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.08)] backdrop-blur-md">
                   <span className="relative flex h-2.5 w-2.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
                   </span>
-                  Available for hire
+                  Available for Hire
                 </div>
               </motion.div>
             </motion.div>

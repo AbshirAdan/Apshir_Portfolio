@@ -81,13 +81,13 @@ export function AdminLayout() {
 
   const sidebar = (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center gap-3 border-b border-brand-border px-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-sm font-bold text-white">
+      <div className="flex h-16 items-center gap-3 border-b border-brand-border px-5 justify-center lg:justify-start">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-sm">
           P
         </div>
-        <div>
-          <p className="font-semibold text-brand-text">Portfolio CMS</p>
-          <p className="text-xs text-brand-muted">Admin Dashboard</p>
+        <div className="lg:block hidden truncate">
+          <p className="font-semibold text-brand-text text-sm">Portfolio CMS</p>
+          <p className="text-[10px] text-brand-muted">Admin Dashboard</p>
         </div>
       </div>
 
@@ -100,25 +100,28 @@ export function AdminLayout() {
             onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
+                'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition justify-center lg:justify-start',
                 isActive
                   ? 'bg-indigo-600 text-white shadow-sm'
                   : 'text-brand-secondaryText hover:bg-brand-surface'
               )
             }
+            title={label}
           >
-            <Icon size={18} />
-            {label}
+            <Icon size={18} className="shrink-0" />
+            <span className="lg:block hidden truncate">{label}</span>
           </NavLink>
         ))}
       </nav>
 
-      <div className="border-t border-brand-border p-3">
+      <div className="border-t border-brand-border p-3 flex justify-center lg:justify-start">
         <Link
           to="/"
-          className="block rounded-xl px-3 py-2 text-sm text-brand-muted hover:bg-brand-surface"
+          className="block rounded-xl px-3 py-2 text-sm text-brand-muted hover:bg-brand-surface truncate"
+          title="View public site"
         >
-          ← View public site
+          <span className="lg:inline hidden">← View public site</span>
+          <span className="lg:hidden inline text-base">←</span>
         </Link>
       </div>
     </div>
@@ -126,8 +129,8 @@ export function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-brand-surface text-brand-text transition-colors duration-300">
-      {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-brand-border bg-brand-sidebar lg:block">
+      {/* Desktop & Tablet Sidebar */}
+      <aside className="hidden md:block md:w-20 lg:w-64 shrink-0 border-r border-brand-border bg-brand-sidebar transition-all duration-300">
         {sidebar}
       </aside>
 
@@ -139,7 +142,7 @@ export function AdminLayout() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-slate-950/50 lg:hidden"
+              className="fixed inset-0 z-40 bg-slate-950/50 md:hidden"
               onClick={() => setSidebarOpen(false)}
             />
             <motion.aside
@@ -147,14 +150,14 @@ export function AdminLayout() {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 z-50 w-64 border-r border-brand-border bg-brand-sidebar lg:hidden"
+              className="fixed inset-y-0 left-0 z-50 w-64 border-r border-brand-border bg-brand-sidebar md:hidden"
             >
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="absolute right-3 top-4 rounded-lg p-2 text-brand-muted hover:bg-brand-surface"
+                className="absolute right-3 top-4 rounded-lg p-2 text-brand-muted hover:bg-brand-surface min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close menu"
               >
-                <FiX />
+                <FiX size={18} />
               </button>
               {sidebar}
             </motion.aside>
@@ -168,20 +171,20 @@ export function AdminLayout() {
           <div className="flex min-w-0 items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="rounded-lg p-2 text-brand-icon hover:bg-brand-surface lg:hidden"
+              className="rounded-lg p-2 text-brand-icon hover:bg-brand-surface md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label="Open menu"
             >
               <FiMenu size={20} />
             </button>
             <nav className="hidden min-w-0 truncate text-sm text-brand-muted sm:block">
-              <Link to="/admin" className="hover:text-indigo-600">
+              <Link to="/admin" className="hover:text-indigo-600 font-semibold">
                 Admin
               </Link>
               {crumbs.map((crumb) => (
                 <span key={crumb.path}>
                   <span className="mx-2">/</span>
                   {crumb.isLast ? (
-                    <span className="font-medium text-brand-text">{crumb.label}</span>
+                    <span className="font-semibold text-brand-text">{crumb.label}</span>
                   ) : (
                     <Link to={crumb.path} className="hover:text-indigo-600">
                       {crumb.label}
@@ -195,7 +198,7 @@ export function AdminLayout() {
           <div className="flex items-center gap-2">
             <button
               onClick={toggleTheme}
-              className="rounded-xl p-2.5 text-brand-icon transition hover:bg-brand-surface"
+              className="rounded-xl p-2.5 text-brand-icon transition hover:bg-brand-surface min-h-[44px]"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <FiSun size={18} /> : <FiMoon size={18} />}
@@ -206,7 +209,7 @@ export function AdminLayout() {
             <div className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition hover:bg-brand-surface"
+                className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition hover:bg-brand-surface min-h-[44px]"
               >
                 {user?.avatar ? (
                   <img src={user.avatar} alt="" className="h-8 w-8 rounded-full object-cover" />
@@ -258,7 +261,7 @@ export function AdminLayout() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 lg:p-6">
+        <main className="flex-1 p-4 lg:p-6 overflow-x-hidden">
           <Outlet />
         </main>
       </div>

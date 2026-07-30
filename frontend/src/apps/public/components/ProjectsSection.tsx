@@ -56,14 +56,14 @@ export function ProjectsSection() {
       </div>
 
       {loading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => <div key={i} className="glass-card h-72 animate-pulse" />)}
         </div>
       ) : projects.length === 0 ? (
         <p className="text-center text-brand-muted">No published projects yet.</p>
       ) : (
         <>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {projects.map((project, i) => (
               <motion.article
                 key={project.id}
@@ -72,29 +72,31 @@ export function ProjectsSection() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
                 whileHover={{ y: -6 }}
-                className="glass-card group cursor-pointer overflow-hidden"
+                className="glass-card group cursor-pointer overflow-hidden flex flex-col h-full"
                 onClick={() => {
                   getPublicProject(project.slug).then(setSelected).catch(() => setSelected(project))
                 }}
               >
-                <div className="relative aspect-video overflow-hidden bg-brand-primary/10">
+                <div className="relative aspect-video overflow-hidden bg-brand-primary/10 shrink-0">
                   {project.thumbnail ? (
                     <img src={project.thumbnail} alt="" className="h-full w-full object-cover transition group-hover:scale-105" loading="lazy" />
                   ) : (
                     <div className="flex h-full items-center justify-center text-brand-muted">No image</div>
                   )}
                   {project.featured && (
-                    <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-brand-accent px-2 py-1 text-xs font-semibold text-slate-900">
+                    <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-brand-accent px-2.5 py-1 text-xs font-bold text-slate-900 shadow-sm">
                       <FiStar size={12} /> Featured
                     </span>
                   )}
                 </div>
-                <div className="p-5">
-                  <h3 className="text-lg font-semibold">{project.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm text-brand-muted">{project.short_description}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
+                <div className="p-5 flex flex-col justify-between flex-1">
+                  <div>
+                    <h3 className="text-lg font-bold text-brand-text group-hover:text-brand-primary transition-colors">{project.title}</h3>
+                    <p className="mt-2 line-clamp-2 text-sm text-brand-muted leading-relaxed">{project.short_description}</p>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
                     {(project.technologies || []).slice(0, 4).map((t) => (
-                      <span key={t} className="rounded-lg bg-brand-primary/20 px-2 py-1 text-xs text-brand-secondary">{t}</span>
+                      <span key={t} className="rounded-lg bg-brand-primary/10 dark:bg-brand-primary/20 px-2 py-1 text-xs text-brand-primary dark:text-brand-secondary font-medium">{t}</span>
                     ))}
                   </div>
                 </div>
@@ -104,9 +106,9 @@ export function ProjectsSection() {
 
           {totalPages > 1 && (
             <div className="mt-8 flex justify-center gap-2">
-              <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="btn-outline disabled:opacity-40">Prev</button>
+              <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="btn-outline disabled:opacity-40 min-h-[44px] px-4 py-2">Prev</button>
               <span className="flex items-center px-4 text-sm text-brand-muted">{page} / {totalPages}</span>
-              <button type="button" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)} className="btn-outline disabled:opacity-40">Next</button>
+              <button type="button" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)} className="btn-outline disabled:opacity-40 min-h-[44px] px-4 py-2">Next</button>
             </div>
           )}
         </>
@@ -118,41 +120,52 @@ export function ProjectsSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm"
             onClick={() => setSelected(null)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="glass-card max-h-[90vh] w-full max-w-3xl overflow-y-auto p-6"
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="glass-card max-h-[90vh] w-full max-w-3xl overflow-y-auto p-5 sm:p-7 flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-4 flex items-start justify-between">
-                <h3 className="text-2xl font-bold">{selected.title}</h3>
-                <button type="button" onClick={() => setSelected(null)} aria-label="Close"><FiX size={24} /></button>
+                <h3 className="text-xl sm:text-2xl font-bold text-brand-text pr-4">{selected.title}</h3>
+                <button
+                  type="button"
+                  onClick={() => setSelected(null)}
+                  aria-label="Close"
+                  className="rounded-xl p-2.5 hover:bg-brand-surface text-brand-muted hover:text-brand-text min-h-[44px] min-w-[44px] flex items-center justify-center shrink-0"
+                >
+                  <FiX size={22} />
+                </button>
               </div>
               {selected.images && selected.images.length > 0 && (
-                <Swiper modules={[Pagination, Autoplay]} pagination autoplay={{ delay: 4000 }} className="mb-6 rounded-xl">
-                  {selected.images.map((img) => (
-                    <SwiperSlide key={img.id}>
-                      <img src={img.image} alt="" className="aspect-video w-full object-cover" loading="lazy" />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                <div className="mb-6 rounded-xl overflow-hidden shrink-0">
+                  <Swiper modules={[Pagination, Autoplay]} pagination autoplay={{ delay: 4000 }} className="w-full">
+                    {selected.images.map((img) => (
+                      <SwiperSlide key={img.id}>
+                        <img src={img.image} alt="" className="aspect-video w-full object-cover" loading="lazy" />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
               )}
-              <p className="text-brand-muted">{selected.full_description || selected.short_description}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {(selected.technologies || []).map((t) => (
-                  <span key={t} className="rounded-lg bg-brand-primary/20 px-3 py-1 text-sm">{t}</span>
-                ))}
+              <div className="flex-1 overflow-y-auto pr-1">
+                <p className="text-brand-muted text-sm sm:text-base leading-relaxed whitespace-pre-wrap">{selected.full_description || selected.short_description}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {(selected.technologies || []).map((t) => (
+                    <span key={t} className="rounded-lg bg-brand-primary/10 dark:bg-brand-primary/20 px-3 py-1.5 text-xs sm:text-sm font-medium text-brand-primary dark:text-brand-secondary">{t}</span>
+                  ))}
+                </div>
               </div>
-              <div className="mt-6 flex gap-3">
+              <div className="mt-6 flex flex-wrap gap-3 border-t border-brand-border pt-4 shrink-0">
                 {selected.github_url && (
-                  <a href={selected.github_url} target="_blank" rel="noopener noreferrer" className="btn-outline"><FiGithub /> GitHub</a>
+                  <a href={selected.github_url} target="_blank" rel="noopener noreferrer" className="btn-outline flex-1 sm:flex-initial h-[44px] px-6"><FiGithub /> GitHub</a>
                 )}
                 {selected.live_demo_url && (
-                  <a href={selected.live_demo_url} target="_blank" rel="noopener noreferrer" className="btn-primary"><FiExternalLink /> Live Demo</a>
+                  <a href={selected.live_demo_url} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 sm:flex-initial h-[44px] px-6"><FiExternalLink /> Live Demo</a>
                 )}
               </div>
             </motion.div>

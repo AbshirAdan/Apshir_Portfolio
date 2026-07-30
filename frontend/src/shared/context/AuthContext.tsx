@@ -17,6 +17,7 @@ type AuthContextType = {
   isAdmin: boolean
   isUser: boolean
   signIn: (email: string, password: string, remember?: boolean) => Promise<AuthUser>
+  loginWithToken: (token: string, remember?: boolean) => Promise<AuthUser>
   register: (data: {
     full_name: string
     email: string
@@ -60,6 +61,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return userData
   }
 
+  const loginWithToken = async (token: string, remember = true) => {
+    setStoredToken(token, remember)
+    const userData = await getMe()
+    setUser(userData)
+    return userData
+  }
+
   const register = async (data: {
     full_name: string
     email: string
@@ -93,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin: user?.role === 'admin',
         isUser: user?.role === 'user' || user?.role === 'editor',
         signIn,
+        loginWithToken,
         register,
         logout,
         refreshUser,

@@ -49,6 +49,9 @@ export type Project = {
   featured: boolean
   status: ProjectStatus
   category?: string | null
+  start_date?: string | null
+  completion_date?: string | null
+  display_order?: number
   created_at: string
   updated_at: string
   images?: ProjectImage[]
@@ -259,6 +262,8 @@ export type SiteSettings = {
   id?: string
   site_title: string | null
   hero_title: string | null
+  hero_greeting?: string | null
+  hero_avatar?: string | null
   hero_description: string | null
   hero_subtitle?: string | null
   logo: string | null

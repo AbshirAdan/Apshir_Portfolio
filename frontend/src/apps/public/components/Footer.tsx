@@ -32,12 +32,12 @@ export function Footer() {
   return (
     <footer className="border-t border-brand-border bg-brand-footer/90 py-12 text-brand-text transition-colors duration-300">
       <div className="section-container">
-        <div className="grid gap-10 md:grid-cols-3">
+        <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 text-center sm:text-left">
           <div>
             <h3 className="text-lg font-bold text-brand-text">
               {settings?.site_title || profile?.full_name}
             </h3>
-            <p className="mt-2 text-sm text-brand-muted">
+            <p className="mt-2 text-sm text-brand-muted max-w-xs mx-auto sm:mx-0">
               {settings?.hero_subtitle || 'Building elegant digital experiences.'}
             </p>
           </div>
@@ -55,7 +55,7 @@ export function Footer() {
 
           <div>
             <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-brand-secondary">Connect</h4>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
               {socialLinks.map((link) => {
                 const Icon = PLATFORM_ICONS[link.platform.toLowerCase()] || FiMail
                 return (
@@ -64,7 +64,7 @@ export function Footer() {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-border bg-brand-card text-brand-icon transition hover:border-brand-primary hover:text-brand-secondary"
+                    className="flex h-[44px] w-[44px] items-center justify-center rounded-xl border border-brand-border bg-brand-card text-brand-icon transition hover:border-brand-primary hover:text-brand-secondary"
                     aria-label={link.platform}
                   >
                     <Icon size={18} />
@@ -75,11 +75,11 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-brand-border pt-8 sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-brand-border pt-8 sm:flex-row text-center sm:text-left">
           <p className="text-sm text-brand-muted">
             © {year} {profile?.full_name || settings?.site_title}. All rights reserved.
           </p>
-          <button type="button" onClick={() => scrollToSection('home')} className="btn-outline !px-4 !py-2 text-xs" aria-label="Back to top">
+          <button type="button" onClick={() => scrollToSection('home')} className="btn-outline !px-4 h-[44px] text-xs flex items-center justify-center gap-1.5" aria-label="Back to top">
             <FiArrowUp /> Back to top
           </button>
         </div>
