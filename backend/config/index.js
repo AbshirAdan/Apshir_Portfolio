@@ -7,7 +7,10 @@ const socketConfig = require('./socket');
 module.exports = {
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT, 10) || 5000,
-  frontendUrl: (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, ''),
+  frontendUrl: (process.env.FRONTEND_URL || 'http://localhost:5173').split(',')[0].trim().replace(/\/$/, ''),
+  frontendUrls: (process.env.FRONTEND_URL || 'http://localhost:5173')
+    .split(',')
+    .map((url) => url.trim().replace(/\/$/, '')),
   apiUrl: process.env.API_URL || `http://localhost:${parseInt(process.env.PORT, 10) || 5000}/api`,
 
   adminSeed: {
