@@ -25,6 +25,8 @@ import { TbApi, TbBrandCSharp, TbLayoutGrid } from 'react-icons/tb'
 import { FiGitBranch } from 'react-icons/fi'
 import type { IconType } from 'react-icons'
 
+import React from 'react'
+
 const ICON_MAP: Record<string, IconType> = {
   javascript: SiJavascript,
   typescript: SiTypescript,
@@ -66,19 +68,22 @@ const ICON_MAP: Record<string, IconType> = {
   mvc: TbLayoutGrid,
 }
 
-export function getSkillIcon(name: string): IconType | null {
+function getSkillIcon(name: string): IconType | null {
   const key = name.toLowerCase().trim()
   return ICON_MAP[key] || null
 }
 
 export function SkillIcon({ name, className = 'h-8 w-8' }: { name: string; className?: string }) {
-  const Icon = getSkillIcon(name)
-  if (!Icon) {
+  const IconComponent = getSkillIcon(name)
+  if (!IconComponent) {
     return (
       <div className={`flex items-center justify-center rounded-lg bg-brand-primary/20 text-sm font-bold text-brand-secondary ${className}`}>
         {name.charAt(0).toUpperCase()}
       </div>
     )
   }
-  return <Icon className={`${className} text-brand-secondary`} aria-hidden />
+  return React.createElement(IconComponent, {
+    className: `${className} text-brand-secondary`,
+    'aria-hidden': true,
+  })
 }

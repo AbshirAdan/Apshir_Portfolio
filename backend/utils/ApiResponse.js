@@ -6,8 +6,9 @@ class ApiResponse {
   constructor(success, message, data = null) {
     this.success = success;
     this.message = message;
-    this.data = data;
-    this.error = null;
+    if (data !== null && data !== undefined) {
+      this.data = data;
+    }
   }
 }
 

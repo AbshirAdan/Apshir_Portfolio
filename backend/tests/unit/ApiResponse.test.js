@@ -1,6 +1,6 @@
-const ApiError = require('../../server/utils/ApiError');
-const ApiResponse = require('../../server/utils/ApiResponse');
-const HTTP = require('../../server/constants/httpStatus');
+const ApiError = require('../../utils/ApiError');
+const ApiResponse = require('../../utils/ApiResponse');
+const HTTP = require('../../constants/httpStatus');
 
 describe('ApiResponse', () => {
   it('creates success envelope with data', () => {
